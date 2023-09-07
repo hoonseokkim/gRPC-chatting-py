@@ -1,0 +1,66 @@
+syntax = "proto3";
+
+
+
+//python -m grpc_tools.protoc -I./ --python_out=. --grpc_python_out=. chatting.proto
+
+service Chatting{
+    //Client
+
+    rpc CheckClient (Empty) returns (stream Time);
+
+
+    //Channel 
+    rpc MakeChannel (GiveUserAndChannel) returns (SuccessOrNot);
+    rpc ShowChannel (Empty) returns (ChannelList);
+
+
+    rpc EnterChannel (GiveUserAndChannel) returns (SuccessOrNot);
+    
+    rpc ExitChannel (GiveUserAndChannel) returns(SuccessOrNot);
+
+    rpc ShowChannelPeople(ShowPeopleRequest) returns (ChannelPeople);
+
+    //Chatting
+    rpc ChatStream (Empty) returns (stream ChatRequest);
+
+    rpc SendChat (ChatRequest) returns (Empty);
+
+}
+
+message Empty{
+}
+
+message Time{
+    string time = 1;
+}
+
+message GiveUserAndChannel{
+    string user_name = 1;
+    string channel_name = 2;
+}
+
+message ChannelList{
+    repeated string channel_list = 1;
+}
+
+message ShowPeopleRequest{
+    string channel_name = 1;
+}
+
+message ChannelPeople{
+    repeated string people_list = 1;
+}
+
+message SuccessOrNot{
+    bool success = 1;
+}
+
+message ChatRequest{
+    string user_name = 1;
+    string message = 2;
+    string channel_name = 3;
+    optional string cmd = 4;
+}
+
+//chatrequest => channel_number가 자신의 channel과 다르면 수신 X 
